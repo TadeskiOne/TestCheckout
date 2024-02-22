@@ -16,22 +16,3 @@ There is no need to implement all these layers in a new toolkit, but the scenari
 However, the architecture allows bypassing the use of scenarios, but it is not recommended to do so, as, as mentioned above, the scenario should define the criteria by which rules will be applied to transactions or encapsulate logic within scenarios. This structure clearly delineates responsibilities between layers, so avoiding the implementation of higher layers of logic will complicate the implementation of a new toolkit into the application.
 
 It is recommended to add a separate method to the ValuationService for each new scenario. However, it is entirely possible to separate the use of a specific set of tools into a separate service.
-
-## Conceptual example 
-Now that we've explored the code and understand the foundation of the applied solutions, let's consider a conceptual example - creating a new toolkit.
-
-Suppose there is a need to calculate the total profit from all transactions in a specific file. To do this, in `src/Valuation`, we will add a new directory for the toolkit called `Profit`. We will not discard the typed layers of logic from this toolkit, so we'll create two directories: `Rules` and `Scenarios`.
-
-First, let's define the interface of the rules for this toolkit in `Rules`. Analogous to `CommissionFeeRuleInterface`, we'll define the method `applyTo()`, but we'll leave the signature empty, and define the return type as `mixed`.
-
-We'll add a new class `ProfitRule` to Rules. I suggest leaving the `getAmount` method empty for now (return 0), and for `getAmountType` and `getOperationType`, let's create a `NullObject` that implements `RuleAmountTypeInterface` and `RuleOperationTypeInterface`. We'll describe the calculation logic in `applyTo()`.
-
-Since we need to apply this rule to multiple transactions, we can:
- - In the `applyTo()` signature of `ProfitRule`, specify `DataProviderInterface` - in `ScenarioInterface`, there is a method `setDataProvider`, through which the scenario loads the provider of all transactions, so the scenario can directly pass this provider to our rule.
- - Create an iterator `ProfitTransactionsCollection`, and specify in the `applyTo()` signature that the method expects this collection. This can be useful in cases where, according to the scenario, this rule should only be applied to transactions of, for example, business clients. Then the scenario will filter the necessary transactions from the `DataProvider` and collect them into a collection.
-
-In the `Scenarios` folder, let's create a class `ProfitScenario`. The task of this separate scenario will be to receive the `DataProvider` and pass it to `ProfitRule`. Essentially, in this case, the scenario is a proxy class to adhere to the general approach to toolkit usage. Since `TransactionImmutableInterface` is expected in the `ScenarioInterface::applyTo` signature, in the `ProfitScenario::applyTo` signature, we specify `?TransactionImmutableInterface $transaction = null` to avoid the need to create an empty transaction to run the scenario (because this specific scenario works with all transactions at once).
-
-In `ValuationService`, let's create a new method `calculateProfit`. Here, we'll define the scenarios to be called (for now, just one) and the logic: we'll load the transaction provider through `setDataProvider`, then call `applyTo()`.
-
-Thus, our application gains a new toolkit for calculating profits from the loaded list of transactions.
