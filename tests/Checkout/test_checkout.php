@@ -5,26 +5,76 @@ return [
         \TestCheckout\Scenarios\BOGOFScenario::class        => ['FR1'],
         \TestCheckout\Scenarios\BulkPurchaseScenario::class => ['SR1'],
     ],
-    'items'              => [
+    'cases'              => [
         [
-            'code'     => 'FR1',
-            'name'     => 'Fruit of tea 1',
-            'price'    => 3.11,
-            'quantity' => 2,
+            'items'              => [
+                [
+                    'code'     => 'FR1',
+                    'name'     => 'Fruit of tea',
+                    'price'    => 3.11,
+                ],
+                [
+                    'code'     => 'SR1',
+                    'name'     => 'Strawberries',
+                    'price'    => 5.00,
+                ],
+                [
+                    'code'     => 'FR1',
+                    'name'     => 'Fruit of tea',
+                    'price'    => 3.11,
+                ],
+                [
+                    'code'     => 'FR1',
+                    'name'     => 'Fruit of tea',
+                    'price'    => 3.11,
+                ],
+                [
+                    'code'     => 'CF1',
+                    'name'     => 'Coffee',
+                    'price'    => 11.23,
+                ],
+            ],
+            'expectedTotal'      => 22.45,
         ],
         [
-            'code'     => 'SR1',
-            'name'     => 'Strawberries 1',
-            'price'    => 5.00,
-            'quantity' => 3,
+            'items'              => [
+                [
+                    'code'     => 'FR1',
+                    'name'     => 'Fruit of tea',
+                    'price'    => 3.11,
+                ],
+                [
+                    'code'     => 'FR1',
+                    'name'     => 'Fruit of tea',
+                    'price'    => 3.11,
+                ],
+            ],
+            'expectedTotal'      => 3.11,
         ],
         [
-            'code'     => 'CF1',
-            'name'     => 'Coffee 1',
-            'price'    => 11.23,
-            'quantity' => 3,
+            'items'              => [
+                [
+                    'code'     => 'SR1',
+                    'name'     => 'Strawberries',
+                    'price'    => 5.00,
+                ],
+                [
+                    'code'     => 'FR1',
+                    'name'     => 'Fruit of tea',
+                    'price'    => 3.11,
+                ],
+                [
+                    'code'     => 'SR1',
+                    'name'     => 'Strawberries',
+                    'price'    => 5.00,
+                ],
+                [
+                    'code'     => 'SR1',
+                    'name'     => 'Strawberries',
+                    'price'    => 5.00,
+                ],
+            ],
+            'expectedTotal'      => 16.61,
         ],
     ],
-    'expectedTotal'      => 53.41,
-    'expectedItemsCount' => 4,
 ];

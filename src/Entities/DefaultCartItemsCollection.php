@@ -61,7 +61,7 @@ class DefaultCartItemsCollection implements CartItemsCollectionInterface
 
     public function valid(): bool
     {
-        return true;
+        return current($this->cartItems) instanceof CartItemInterface;
     }
 
     public function rewind(): void

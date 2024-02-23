@@ -10,7 +10,7 @@ interface CartItemInterface
 
     public function getName(): string;
 
-    public function getQuantity(): int|float;
-
     public function getPrice(): float;
+
+    public function setPrice(float $price): void;
 }

@@ -7,14 +7,12 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use TestCheckout\Checkout;
 use TestCheckout\Components\RulesCollectorInterface;
 use TestCheckout\Components\RulesMath;
-use TestCheckout\Entities\Definitions\CartFactoryInterface;
 use TestCheckout\Entities\Definitions\CartItemInterface;
-use TestCheckout\Rules\ChangePriceFromQtyRule;
 use TestCheckout\Rules\SimpleChangePriceRule;
 use TestCheckout\Scenarios\BOGOFScenario;
 use TestCheckout\Scenarios\BulkPurchaseScenario;
 
-class CheckoutTest extends TestCase implements CartFactoryInterface
+class CheckoutTest extends TestCase
 {
     use ProphecyTrait;
 
@@ -25,45 +23,63 @@ class CheckoutTest extends TestCase implements CartFactoryInterface
         $math = new RulesMath();
 
         $rulesCollector = $this->prophesize(RulesCollectorInterface::class);
-        $rulesCollector->collectRule(ChangePriceFromQtyRule::class)
-           ->willReturn(new ChangePriceFromQtyRule($math));
         $rulesCollector->collectRule(SimpleChangePriceRule::class)
            ->willReturn(new SimpleChangePriceRule($math));
         $rulesCollector = $rulesCollector->reveal();
+        foreach ($data['cases'] as $case) {
+            $checkout = new Checkout(
+                new \ArrayObject(
+                    [
+                        BOGOFScenario::class        => (new BOGOFScenario($rulesCollector, $math))
+                            ->setAvailableProductCodes($data['available_products'][BOGOFScenario::class]),
+                        BulkPurchaseScenario::class => (new BulkPurchaseScenario($rulesCollector, $math))
+                            ->setAvailableProductCodes($data['available_products'][BulkPurchaseScenario::class]),
+                    ]
+                )
+            );
 
-        $checkout = new Checkout(
-            new \ArrayObject(
-                [
-                    BOGOFScenario::class => (new BOGOFScenario($rulesCollector, $this, $math))
-                        ->setAvailableProductCodes($data['available_products'][BOGOFScenario::class]),
-                    BulkPurchaseScenario::class => (new BulkPurchaseScenario($rulesCollector, $math))
-                        ->setAvailableProductCodes($data['available_products'][BulkPurchaseScenario::class])
-                ]
-            )
-        );
+            foreach ($case['items'] as $rawCartItem) {
+                $checkout->scan($this->getMockCartItem($rawCartItem));
+            }
 
-        foreach ($data['items'] as $rawCartItem) {
-            $cartItem = $this->prophesize(CartItemInterface::class);
-            $cartItem->getCode()->willReturn($rawCartItem['code']);
-            $cartItem->getName()->willReturn($rawCartItem['name']);
-            $cartItem->getPrice()->willReturn($rawCartItem['price']);
-            $cartItem->getQuantity()->willReturn($rawCartItem['quantity']);
-
-            $checkout->scan($cartItem->reveal());
+            $this->assertEquals($case['expectedTotal'], $checkout->total());
         }
-
-        $this->assertEquals($data['expectedTotal'], $checkout->total());
-        $this->assertEquals($data['expectedItemsCount'], $checkout->getCartItems()->count());
     }
 
-    public function makeItem(string $code, string $name, float|int $quantity, float $price): CartItemInterface
+    private function getMockCartItem(array $rawCartItem): CartItemInterface
     {
-        $cartItem = $this->prophesize(CartItemInterface::class);
-        $cartItem->getCode()->willReturn($code);
-        $cartItem->getName()->willReturn($name);
-        $cartItem->getQuantity()->willReturn($quantity);
-        $cartItem->getPrice()->willReturn($price);
+        return new class(
+            $rawCartItem['code'],
+            $rawCartItem['name'],
+            $rawCartItem['price'],
+        ) implements CartItemInterface
+        {
+            public function __construct(
+                private readonly string $code,
+                private readonly string $name,
+                private float           $price,
+            ) {}
 
-        return $cartItem->reveal();
+
+            public function getCode(): string
+            {
+                return $this->code;
+            }
+
+            public function getName(): string
+            {
+                return $this->name;
+            }
+
+            public function getPrice(): float
+            {
+                return $this->price;
+            }
+
+            public function setPrice(float $price): void
+            {
+                $this->price = $price;
+            }
+        };
     }
 }
