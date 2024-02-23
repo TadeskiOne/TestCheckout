@@ -26,7 +26,7 @@ composer run test
 ```
 Via Docker:
 ```shell
- docker exec checkout composer composer run test
+ docker exec checkout composer run test
 ```
 
 ## Documentation
