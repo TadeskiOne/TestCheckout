@@ -26,7 +26,7 @@ composer run test
 ```
 Via Docker:
 ```shell
- docker exec pay-process composer composer run test
+ docker exec pay-process composer run test
 ```
 
 ## Documentation
