@@ -14,7 +14,7 @@ composer install
 ```
 OR via Docker
 ```shell
-docker exec pay-process composer install
+docker exec checkout composer install
 ```
 
 The minimum requirements is a PHP 8.1 if you run app without Docker
@@ -26,7 +26,7 @@ composer run test
 ```
 Via Docker:
 ```shell
- docker exec pay-process composer composer run test
+ docker exec checkout composer composer run test
 ```
 
 ## Documentation
