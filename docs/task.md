@@ -23,9 +23,9 @@ $co->scan($item);
 $price = $co->total;
 ```
 
-1 - Implement a checkout system that fulfils these requirements.
-2 - Make sure your code is fully documented so that PHPDoc files can be generated automatically.
-3 - Make sure your code is 100% covered by unit tests.
+1. Implement a checkout system that fulfils these requirements.
+2. Make sure your code is fully documented so that PHPDoc files can be generated automatically.
+3. Make sure your code is 100% covered by unit tests.
 
 Test data
 ---------
