@@ -31,3 +31,4 @@ Via Docker:
 
 ## Documentation
  1. [General](docs/general_info.md)
+ 2. [The Task](docs/task.md) 
