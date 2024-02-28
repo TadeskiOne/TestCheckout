@@ -29,7 +29,7 @@ $price = $co->total;
 
 Test data
 ---------
-
+```
 Basket: FR1,SR1,FR1,FR1,CF1
 Total price expected: £22.45
 
@@ -38,3 +38,4 @@ Total price expected: £3.11
 
 Basket: SR1,SR1,FR1,SR1
 Total price expected: £16.61
+```
